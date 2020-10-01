@@ -26,8 +26,9 @@ app = Flask(__name__)
 def welcome():
     session = Session(engine)
     return (
-        f"Welcome to the Climate API!<br/>"
-        f"Available Routes:<br/>"
+        f"Welcome to the Homepage<br/>"
+        f"<br/>"
+        f"Available routes:<br/>"
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
@@ -39,16 +40,9 @@ def welcome():
 @app.route('/api/v1.0/precipitation/')
 def precipitation():
     session = Session(engine)
-    #find last date in database from Measurements 
     last_date = session.query(Measurement.date).order_by(Measurement.date.desc()).first().date
-
-    #convert last date string to date
     last_date = dt.datetime.strptime(last_date, "%Y-%m-%d")
-
-    #calculate date one year after last date using timedelta datetime function
     first_date = last_date - dt.timedelta(days=365)
-
-    # Perform a query to retrieve the data and precipitation scores
     last_year_data = session.query(Measurement.date, Measurement.prcp).filter(Measurement.date >= first_date).all()
 
     return jsonify(last_year_data)
